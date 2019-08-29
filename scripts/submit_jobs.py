@@ -25,13 +25,20 @@ if (config.verbose):
 #InputFile extension
 fileExt = ""
 if ("stdhep" in step):
-    fileExt = "stdhep"
+    fileExt = ".stdhep"
+elif ("spacing" in step):
+    fileExt = ".slcio"
+elif ("readout" in step):
+    fileExt = ".slcio"
 
 # Grep initial files
 if (config.verbose):
     print "Grepping for:", "ls " + indir+"/*" + fileExt
 inFileList = glob.glob(indir+"*." + fileExt)
-
+if len(inFileList)==0:
+    print "Try grepping for ls "+indir+"/*/*"+fileExt 
+    inFileList = glob.glob(indir+"*/*" + fileExt)
+    print "Total number of file found=", len(inFileList)
 if (config.verbose):
     print inFileList
 
@@ -55,10 +62,15 @@ count=0
 sG = scriptGenerator.scriptGenerator(step,scriptdir,outputfdir)
 
 for ifile in inFileList:
-    filePrefix = ifile.split("/")[-1].split(".stdhep")[0]
+    filePrefix = ifile.split("/")[-1].split(fileExt)[0]
     sG.generateScript(filePrefix)
-    sG.setupStdhepToSimul(ifile,filePrefix+"_simul",geoM.getGeoFile("nominal"),nevents)
+    if ("stdhep" in step):
+        sG.setupStdhepToSimul(ifile,filePrefix+"_simul",geoM.getGeoFile("nominal"),nevents)
+    elif ("spacing" in step):
+        sG.setupBunchSpacing(ifile,filePrefix+"_spacing")
+    elif ("readout" in step):
+        sG.setupReadout(ifile,filePrefix+"_readout",geoM.getGeoTag("nominal"))
     sG.closeScript()
-    print "bsub -q " + config.queue + "-o " + logdir + " -e " + logdir + " "+sG.scriptFileName
+    print "bsub -q " + config.queue + " -o " + logdir + " -e " + logdir + " "+sG.scriptFileName
     if config.submit:
         subprocess.call(["bsub","-q",config.queue,"-o",logdir,"-e",logdir,sG.scriptFileName])

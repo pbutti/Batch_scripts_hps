@@ -9,3 +9,7 @@ class GeometryMapper:
 
     def getGeoFile(self,det):
         return self.location+self.detGeoMap[det]+"/"+self.detGeoMap[det]+".lcdd"
+    
+    def getGeoTag(self,det):
+        return self.detGeoMap[det]
+
