@@ -1,0 +1,1 @@
+java -DdisableSvtAlignmentConstants -XX:+UseSerialGC -Xmx1000m -cp <Jar File> org.hps.util.FilterMCBunches -e250 <infile> <outfile>-spaced.slcio -d -E0.05 -w2000000
