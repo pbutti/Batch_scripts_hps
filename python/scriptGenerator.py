@@ -9,6 +9,9 @@ class scriptGenerator:
     scriptdir      = ""
     outputdir      = ""
     step           = "stdhep"
+    #Readout steering file: /nfs/slac/g/hps2/pbutti/MC_basic_generation/readoutFiles/Test_readout.lcsim
+    #Recon   steering file: steering-files/src/main/resources/org/hps/steering/production/Run2019ReconPlusDataQuality.lcsim
+    
     steeringFile   = "/nfs/slac/g/hps2/pbutti/MC_basic_generation/readoutFiles/Test_readout.lcsim"
     jarFile        = "distribution/target/hps-distribution-4.4-2019-SNAPSHOT-bin.jar"
 
@@ -62,10 +65,16 @@ class scriptGenerator:
     def setupReadout(self,slcioFile,outFileName,detector,runNumber=9600):
         #TOD-FIX THIS
         self.wline('cd /nfs/slac/g/hps2/pbutti/hps-java/')
-        self.wline('java -jar '+self.jarFile+" "+self.steeringFile + " -i " + slcioFile + " -DoutputFile="+outFileName+" -R "+str(runNumber) +" -d "+detector)
-        
+        self.wline('java -jar '+self.jarFile+" "+self.steeringFile + " -i " + slcioFile + " -DoutputFile=$OUTPUTDIR/"+outFileName+" -R "+str(runNumber) +" -d "+detector)
         
 
+    def setupRecon(self,slcioFile,outFileName,nevents=-1):
+        self.wline('cd /nfs/slac/g/hps2/pbutti/hps-java/')
+        cmd = 'java -jar ' + self.jarFile + ' ' + self.steeringFile  +' -i ' + slcioFile + ' -DoutputFile=$OUTPUTDIR/'+outFileName
+        if (nevents>0):
+            cmd+=' -n ' + str(nevents)
+        self.wline(cmd)
+            
     def runSlic(self,istdhep,ofile,det,nevs):
         self.wline('echo slic -g ' + det + ' -i ' + istdhep + ' -x -p $OUTPUTDIR/  -o ' + ofile + ' -r ' + str(nevs))
         self.wline('slic -g ' + det + " -i " + istdhep + " -x -p $OUTPUTDIR/ -o " + ofile + " -r " + str(nevs))

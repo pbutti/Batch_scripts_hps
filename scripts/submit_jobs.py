@@ -30,14 +30,21 @@ elif ("spacing" in step):
     fileExt = ".slcio"
 elif ("readout" in step):
     fileExt = ".slcio"
+elif ("recon" in step):
+    fileExt = ".slcio"
+else :
+    print "ERROR: step not found! Select between stdhep,spacing,readout,recon"
+    sys.exit(1)
 
 # Grep initial files
 if (config.verbose):
     print "Grepping for:", "ls " + indir+"/*" + fileExt
-inFileList = glob.glob(indir+"*." + fileExt)
+inFileList = glob.glob(indir+"/*" + fileExt)
+if (config.verbose):
+    print inFileList
 if len(inFileList)==0:
-    print "Try grepping for ls "+indir+"/*/*"+fileExt 
-    inFileList = glob.glob(indir+"*/*" + fileExt)
+    print "Try grepping for ls "+indir+"/*/*" + fileExt
+    inFileList = glob.glob(indir+"/*/*" + fileExt)
     print "Total number of file found=", len(inFileList)
 if (config.verbose):
     print inFileList
@@ -70,6 +77,10 @@ for ifile in inFileList:
         sG.setupBunchSpacing(ifile,filePrefix+"_spacing")
     elif ("readout" in step):
         sG.setupReadout(ifile,filePrefix+"_readout",geoM.getGeoTag("nominal"))
+    elif ("recon" in step):
+        sG.setSteeringFile("steering-files/src/main/resources/org/hps/steering/production/Run2019ReconPlusDataQuality.lcsim")
+        sG.setupRecon(ifile,filePrefix+"_recon",-1)
+    
     sG.closeScript()
     print "bsub -q " + config.queue + " -o " + logdir + " -e " + logdir + " "+sG.scriptFileName
     if config.submit:
