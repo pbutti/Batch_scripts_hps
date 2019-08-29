@@ -3,6 +3,7 @@ import scriptGenerator
 import GeometryMapper
 import os
 import glob
+import subprocess
 
 config = OptParsing()
 
@@ -36,7 +37,7 @@ if (config.verbose):
 
 #Create the script directory, the log directory and the output file directory in the outdir
 logdir = outdir+"/logs/"
-outputfdir = outdir+"outputFiles/"
+outputfdir = outdir+"/outputFiles/"
 scriptdir  = outdir+"/submit_scripts/"
 if not os.path.exists(logdir):
     os.makedirs(logdir)
@@ -58,4 +59,6 @@ for ifile in inFileList:
     sG.generateScript(filePrefix)
     sG.setupStdhepToSimul(ifile,filePrefix+"_simul",geoM.getGeoFile("nominal"),nevents)
     sG.closeScript()
-    print "bsub -o " + logdir + " -e " + logdir + " "+sG.scriptFileName
+    print "bsub -q " + config.queue + "-o " + logdir + " -e " + logdir + " "+sG.scriptFileName
+    if config.submit:
+        subprocess.call(["bsub","-q",config.queue,"-o",logdir,"-e",logdir,sG.scriptFileName])
