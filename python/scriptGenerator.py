@@ -33,7 +33,7 @@ class scriptGenerator:
         self.wline('echo "Job file directory: $JOBFILEDIR"')
         self.wline('export HOME=$JOBFILEDIR')
         self.wline('cd $HOME')
-        self.wline('OUTPUTDIR=$JOBFILEDIR/outputs_${LSB_JOBID}/; mkdir $OUTPUTDIR')
+        self.wline('export OUTPUTDIR=$JOBFILEDIR/outputs_'+fileID+'_${LSB_JOBID}/; mkdir $OUTPUTDIR')
         self.wline('echo "Created $OUTPUTDIR"')
         
     def closeScript(self):
@@ -74,6 +74,11 @@ class scriptGenerator:
         if (nevents>0):
             cmd+=' -n ' + str(nevents)
         self.wline(cmd)
+
+
+    def runHipster(self,slcioFile):
+        self.wline('source /nfs/slac/g/hps2/pbutti/hipster/hpstr_env_init.sh')
+        self.wline('hpstr /nfs/slac/g/hps2/pbutti/hipster/run/rawSvtHits_cfg_bsub.py ' + slcioFile)
             
     def runSlic(self,istdhep,ofile,det,nevs):
         self.wline('echo slic -g ' + det + ' -i ' + istdhep + ' -x -p $OUTPUTDIR/  -o ' + ofile + ' -r ' + str(nevs))

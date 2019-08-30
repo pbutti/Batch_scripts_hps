@@ -11,6 +11,13 @@ indir   = config.indir
 outdir  = config.outdir
 step    = config.step
 nevents = config.nevents
+local   = config.local
+submit  = config.submit
+
+if (local and submit):
+    print "WARNING: setup both local and batch submission"
+    print "Will set local submission to false."
+    local = False
 
 if not os.path.exists(outdir):
     os.makedirs(outdir)
@@ -31,6 +38,8 @@ elif ("spacing" in step):
 elif ("readout" in step):
     fileExt = ".slcio"
 elif ("recon" in step):
+    fileExt = ".slcio"
+elif ("hipster" in step):
     fileExt = ".slcio"
 else :
     print "ERROR: step not found! Select between stdhep,spacing,readout,recon"
@@ -80,8 +89,11 @@ for ifile in inFileList:
     elif ("recon" in step):
         sG.setSteeringFile("steering-files/src/main/resources/org/hps/steering/production/Run2019ReconPlusDataQuality.lcsim")
         sG.setupRecon(ifile,filePrefix+"_recon",-1)
-    
+    elif ("hipster" in step):
+        sG.runHipster(ifile)
     sG.closeScript()
     print "bsub -q " + config.queue + " -o " + logdir + " -e " + logdir + " "+sG.scriptFileName
-    if config.submit:
+    if submit:
         subprocess.call(["bsub","-q",config.queue,"-o",logdir,"-e",logdir,sG.scriptFileName])
+    if local:
+        subprocess.call([sG.scriptFileName])
