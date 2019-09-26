@@ -35,6 +35,9 @@ class scriptGenerator:
         self.wline('cd $HOME')
         self.wline('export OUTPUTDIR=$JOBFILEDIR/outputs_'+fileID+'_${LSB_JOBID}/; mkdir $OUTPUTDIR')
         self.wline('echo "Created $OUTPUTDIR"')
+        self.wline('source /nfs/slac/g/hps3/software/setup.sh')
+        self.wline('export LD_LIBRARY_PATH=/usr/lib64:$LD_LIBRARY_PATH')
+        self.wline('hostname')
         
     def closeScript(self):
         self.wline('echo "Moving files to outputdir"')
