@@ -13,6 +13,7 @@ step    = config.step
 nevents = config.nevents
 local   = config.local
 submit  = config.submit
+wall    = config.wall
 
 if (local and submit):
     print "WARNING: setup both local and batch submission"
@@ -37,7 +38,7 @@ elif ("spacing" in step):
     fileExt = ".slcio"
 elif ("readout" in step):
     fileExt = ".slcio"
-elif ("recon" in step):
+elif ("recon" in step or "align" in step):
     fileExt = ".slcio"
 elif ("hipster" in step):
     fileExt = ".slcio"
@@ -87,13 +88,22 @@ for ifile in inFileList:
     elif ("readout" in step):
         sG.setupReadout(ifile,filePrefix+"_readout",geoM.getGeoTag("nominal"))
     elif ("recon" in step):
-        sG.setSteeringFile("steering-files/src/main/resources/org/hps/steering/production/Run2019ReconPlusDataQuality.lcsim")
-        sG.setupRecon(ifile,filePrefix+"_recon",-1)
+        #sG.setSteeringFile("steering-files/src/main/resources/org/hps/steering/production/Run2019ReconPlusDataQuality.lcsim")
+        sG.setSteeringFile("steering-files/src/main/resources/org/hps/steering/production/Run2019Recon.lcsim")
+        sG.setupRecon(ifile,filePrefix+"_recon",nevents)
+    elif ("align" in step):
+        sG.setHPSJavaDir("/nfs/slac/g/hps2/pbutti/alignment/hps-java/")
+        sG.setSteeringFile("/nfs/slac/g/hps2/pbutti/alignment/hps-java/PhysicsRun2016_fromLCIO.lcsim")
+        sG.setupRecon(ifile,filePrefix+"_align",nevents)
+        #Move the millepede.bin
     elif ("hipster" in step):
         sG.runHipster(ifile)
     sG.closeScript()
-    print "bsub -q " + config.queue + " -o " + logdir + " -e " + logdir + " "+sG.scriptFileName
+    #rhel60 is deprecated
+    #print "bsub -W "+wall+" -R rhel60 -q " + config.queue + " -o " + logdir + " -e " + logdir + " "+sG.scriptFileName
+    
+    print "bsub -W "+wall+" -R centos7 -q " + config.queue + " -o " + logdir + " -e " + logdir + " "+sG.scriptFileName
     if submit:
-        subprocess.call(["bsub","-q",config.queue,"-o",logdir,"-e",logdir,sG.scriptFileName])
+        subprocess.call(["bsub","-W",wall,"-R","centos7","-q",config.queue,"-o",logdir,"-e",logdir,sG.scriptFileName])
     if local:
         subprocess.call([sG.scriptFileName])

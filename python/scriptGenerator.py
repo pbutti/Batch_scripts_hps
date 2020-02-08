@@ -13,7 +13,8 @@ class scriptGenerator:
     #Recon   steering file: steering-files/src/main/resources/org/hps/steering/production/Run2019ReconPlusDataQuality.lcsim
     
     steeringFile   = "/nfs/slac/g/hps2/pbutti/MC_basic_generation/readoutFiles/Test_readout.lcsim"
-    jarFile        = "distribution/target/hps-distribution-4.4-2019-SNAPSHOT-bin.jar"
+    jarFile        = "distribution/target/hps-distribution-4.5-SNAPSHOT-bin.jar"
+    hpsJavaDir     = "/nfs/slac/g/hps2/pbutti/hps-java/"
 
     #Methods
 
@@ -28,7 +29,7 @@ class scriptGenerator:
     def generateScript(self,fileID):
         self.scriptFileName = self.scriptdir+"/script_submit_job_"+fileID+".sh"
         self.scriptFile = open(self.scriptFileName,"w")
-        self.wline("#! /bin/bash")
+        self.wline("#!/bin/bash")
         self.wline('JOBFILEDIR=`mktemp -d /scratch/${LSB_JOBID}_JobWork.XXXXXX`')
         self.wline('echo "Job file directory: $JOBFILEDIR"')
         self.wline('export HOME=$JOBFILEDIR')
@@ -36,7 +37,6 @@ class scriptGenerator:
         self.wline('export OUTPUTDIR=$JOBFILEDIR/outputs_'+fileID+'_${LSB_JOBID}/; mkdir $OUTPUTDIR')
         self.wline('echo "Created $OUTPUTDIR"')
         self.wline('source /nfs/slac/g/hps3/software/setup.sh')
-        self.wline('export LD_LIBRARY_PATH=/usr/lib64:$LD_LIBRARY_PATH')
         self.wline('hostname')
         
     def closeScript(self):
@@ -53,26 +53,33 @@ class scriptGenerator:
         
     def setupStdhepToSimul(self,stdhepFile,outFileName,detector,nEvents):
         #TODO-FIX THIS
-        self.wline('cd /nfs/slac/g/hps2/pbutti/hps-java/')
+        self.wline('cd ' + self.hpsJavaDir)
         # Setup SLCIO
         self.wline('source /nfs/slac/g/hps/hps_soft/slic/build/slic-env.sh')
+        #self.wline('source /nfs/slac/g/hps2/pbutti/scripts/setups/slic-env.sh')
+        #self.wline('export LD_LIBRARY_PATH=/usr/lib64:$LD_LIBRARY_PATH')
+        self.wline('env')
+        self.wline('SLIC=`which slic`')
+        self.wline('ldd $SLIC')
+        #self.wline('locate libicui18n.so.42')
+        self.wline('lsb_release -a')
         self.runSlic(stdhepFile,outFileName,detector,nEvents)
 
     def setupBunchSpacing(self,slcioFile,outFileName,spacing=250,Ecut=0.05,wOption=2000000):
                 
         #TODO-FIX THIS
-        self.wline('cd /nfs/slac/g/hps2/pbutti/hps-java/')
+        self.wline('cd ' + self.hpsJavaDir)
         self.wline('java -DdisableSvtAlignmentConstants -XX:+UseSerialGC -Xmx1000m -cp '+ self.jarFile +' org.hps.util.FilterMCBunches -e'+str(spacing)+' '+slcioFile+' $OUTPUTDIR/'+ outFileName+'.slcio -d -E'+str(Ecut)+' -w'+str(wOption))
         
 
     def setupReadout(self,slcioFile,outFileName,detector,runNumber=9600):
         #TOD-FIX THIS
-        self.wline('cd /nfs/slac/g/hps2/pbutti/hps-java/')
+        self.wline('cd ' + self.hpsJavaDir)
         self.wline('java -jar '+self.jarFile+" "+self.steeringFile + " -i " + slcioFile + " -DoutputFile=$OUTPUTDIR/"+outFileName+" -R "+str(runNumber) +" -d "+detector)
         
 
     def setupRecon(self,slcioFile,outFileName,nevents=-1):
-        self.wline('cd /nfs/slac/g/hps2/pbutti/hps-java/')
+        self.wline('cd ' + self.hpsJavaDir)
         cmd = 'java -jar ' + self.jarFile + ' ' + self.steeringFile  +' -i ' + slcioFile + ' -DoutputFile=$OUTPUTDIR/'+outFileName
         if (nevents>0):
             cmd+=' -n ' + str(nevents)
@@ -93,3 +100,6 @@ class scriptGenerator:
     
     def setJarFile(self, jarFile):
         self.jarFile = jarFile
+
+    def setHPSJavaDir(self, javaDir):
+        self.hpsJavaDir = javaDir
