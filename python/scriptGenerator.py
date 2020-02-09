@@ -15,6 +15,7 @@ class scriptGenerator:
     steeringFile   = "/nfs/slac/g/hps2/pbutti/MC_basic_generation/readoutFiles/Test_readout.lcsim"
     jarFile        = "distribution/target/hps-distribution-4.5-SNAPSHOT-bin.jar"
     hpsJavaDir     = "/nfs/slac/g/hps2/pbutti/hps-java/"
+    detector       = "HPS-PhysicsRun2019-v1-4pt5"
 
     #Methods
 
@@ -78,9 +79,21 @@ class scriptGenerator:
         self.wline('java -jar '+self.jarFile+" "+self.steeringFile + " -i " + slcioFile + " -DoutputFile=$OUTPUTDIR/"+outFileName+" -R "+str(runNumber) +" -d "+detector)
         
 
-    def setupRecon(self,slcioFile,outFileName,nevents=-1):
+    def setupRecon(self,inputFilename,outFileName,nevents=-1,fileExt="slcio",year="2019"):
         self.wline('cd ' + self.hpsJavaDir)
-        cmd = 'java -jar ' + self.jarFile + ' ' + self.steeringFile  +' -i ' + slcioFile + ' -DoutputFile=$OUTPUTDIR/'+outFileName
+        
+        #nominal reconstruction
+        cmd = 'java -jar ' + self.jarFile + ' ' + self.steeringFile  +' -i ' + inputFilename + ' -DoutputFile=$OUTPUTDIR/'+outFileName
+        
+        #from evio
+        if (year=="2019"):
+            if (fileExt=="evio"):
+                cmd = 'java -cp ' +self.jarFile + ' org.hps.evio.EvioToLcio ' + inputFilename + ' -DoutputFile=$OUTPUTDIR/'+outFileName
+            else:
+                print "ERROR:script Generator::slcio + 2019 not supported!"
+            #if 2019 use a particular detector
+            cmd+=" -d " + self.detector + " -x " + self.steeringFile
+
         if (nevents>0):
             cmd+=' -n ' + str(nevents)
         self.wline(cmd)

@@ -13,7 +13,9 @@ step    = config.step
 nevents = config.nevents
 local   = config.local
 submit  = config.submit
+year    = config.year
 wall    = config.wall
+fileExt = config.fileExt
 
 if (local and submit):
     print "WARNING: setup both local and batch submission"
@@ -30,8 +32,7 @@ if (config.verbose):
 # MRSolt stdhep location:
 #  /nfs/slac/g/hps_data2/mc_production/tritrig/4pt55/stdhep/00/tritrig_0000.stdhep
 
-#InputFile extension
-fileExt = ""
+'''
 if ("stdhep" in step):
     fileExt = ".stdhep"
 elif ("spacing" in step):
@@ -45,16 +46,18 @@ elif ("hipster" in step):
 else :
     print "ERROR: step not found! Select between stdhep,spacing,readout,recon"
     sys.exit(1)
+'''
+
 
 # Grep initial files
 if (config.verbose):
-    print "Grepping for:", "ls " + indir+"/*" + fileExt
-inFileList = glob.glob(indir+"/*" + fileExt)
+    print "Grepping for:", "ls " + indir+"/*" + fileExt +"*"
+inFileList = glob.glob(indir+"/*" + fileExt+"*")
 if (config.verbose):
     print inFileList
 if len(inFileList)==0:
-    print "Try grepping for ls "+indir+"/*/*" + fileExt
-    inFileList = glob.glob(indir+"/*/*" + fileExt)
+    print "Try grepping for ls "+indir+"/*/*" + fileExt+"*"
+    inFileList = glob.glob(indir+"/*/*" + fileExt+"*")
     print "Total number of file found=", len(inFileList)
 if (config.verbose):
     print inFileList
@@ -78,8 +81,11 @@ geoM = GeometryMapper.GeometryMapper()
 count=0
 sG = scriptGenerator.scriptGenerator(step,scriptdir,outputfdir)
 
+ifile_ID = 0
 for ifile in inFileList:
+    ifile_ID+=1
     filePrefix = ifile.split("/")[-1].split(fileExt)[0]
+    filePrefix += "_"+str(ifile_ID)
     sG.generateScript(filePrefix)
     if ("stdhep" in step):
         sG.setupStdhepToSimul(ifile,filePrefix+"_simul",geoM.getGeoFile("nominal"),nevents)
@@ -89,8 +95,11 @@ for ifile in inFileList:
         sG.setupReadout(ifile,filePrefix+"_readout",geoM.getGeoTag("nominal"))
     elif ("recon" in step):
         #sG.setSteeringFile("steering-files/src/main/resources/org/hps/steering/production/Run2019ReconPlusDataQuality.lcsim")
-        sG.setSteeringFile("steering-files/src/main/resources/org/hps/steering/production/Run2019Recon.lcsim")
-        sG.setupRecon(ifile,filePrefix+"_recon",nevents)
+        if (year=="2019"):
+            #sG.setSteeringFile("steering-files/src/main/resources/org/hps/steering/production/Run2019Recon.lcsim")
+            sG.setHPSJavaDir("/nfs/slac/g/hps2/pbutti/alignment/hps-java/")
+            sG.setSteeringFile("/nfs/slac/g/hps2/pbutti/alignment/hps-java/PhysicsRun2019FullRecon.lcsim")
+        sG.setupRecon(ifile,filePrefix+"_recon",nevents,fileExt,year)
     elif ("align" in step):
         sG.setHPSJavaDir("/nfs/slac/g/hps2/pbutti/alignment/hps-java/")
         sG.setSteeringFile("/nfs/slac/g/hps2/pbutti/alignment/hps-java/PhysicsRun2016_fromLCIO.lcsim")

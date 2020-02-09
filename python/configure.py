@@ -12,6 +12,8 @@ def OptParsing():
     parser.add_option("--submit",dest="submit",help="submit",default=False,action="store_true")
     parser.add_option("--local",dest="local",help="local",default=False,action="store_true")
     parser.add_option("--queue",dest="queue",help="queue: short, medium, long, xlong, xxl",default="medium")
+    parser.add_option("--year",dest="year",help="Which year for steering job Option",default="2019")
+    parser.add_option("--fileExt",dest="fileExt",help="Input File file extension:evio,slcio,stdhep,root",default="evio")
     parser.add_option("-W","--wall",dest="wall",help="time wall in the format [hrs:]minutes, i.e. -W 60 for 1 h", default = "60")
     (config,sys.argv[1:]) = parser.parse_args(sys.argv[1:])
     return config
