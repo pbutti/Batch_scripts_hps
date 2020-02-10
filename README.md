@@ -1,5 +1,6 @@
 9 Feb 2020
 
+
 # Instructions
 
 This package provides some configurable scripts to run some tools on the SLAC batch system such as:
@@ -8,6 +9,8 @@ This package provides some configurable scripts to run some tools on the SLAC ba
 - Hpstr 
 
 ## How to run 
+
+### Running the reco on evio files
 
 This is an example on how to send reconstruction on the batch for 2019 
 
@@ -20,4 +23,20 @@ to the batch system and they can be used for local testing. One can also use ```
 the interactive node one after the other. 
 Without specifying the number events with ```--nevents``` the jobs will process only 100 events. Set ```--nevents=-1``` to process all the events in an input file. 
 
+
+### Running hpstr: ntuples and histograms
+
+Running ntuplization:
+
+```
+python scripts/submit_jobs.py --outdir /nfs/slac/g/hps3/users/pbutti/physrun2019/Run_10031/hpstr_Ntuples/ --indir /nfs/slac/g/hps3/users/pbutti/physrun2019/Run_10031/outputFiles/ --step=hipster --fileExt slcio --nevents -1 --queue medium --isData 1 --hpstrCfg recoTuple_cfg.py --submit
+```
+
+
+Running the histograms:
+
+
+```
+python scripts/submit_jobs.py --outdir /nfs/slac/g/hps3/users/pbutti/physrun2019/Run_10031/hpstr_histos/ --indir /nfs/slac/g/hps3/users/pbutti/physrun2019/Run_10031/hpstr_Ntuples/outputFiles/ --step=hipster --fileExt root --nevents -1 --queue medium --isData 1 --submit 
+```
 
