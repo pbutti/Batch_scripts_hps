@@ -41,3 +41,4 @@ python scripts/submit_jobs.py --outdir /nfs/slac/g/hps3/users/pbutti/physrun2019
 ```
 
 In the case one wants to use different hpstr configuration, it is possible to specify them by ```--hpstrCfg <cfg>```
+It's also possible to specify a list of input files instead of grepping the folder, just use ```--listfiles <list>```. The option can be combined with ```--indir``` to add files from a folder and from a list.
