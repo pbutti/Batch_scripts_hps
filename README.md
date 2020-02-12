@@ -1,4 +1,4 @@
-9 Feb 2020
+12 Feb 2020
 
 
 # Instructions
@@ -40,3 +40,4 @@ Running the histograms:
 python scripts/submit_jobs.py --outdir /nfs/slac/g/hps3/users/pbutti/physrun2019/Run_10031/hpstr_histos/ --indir /nfs/slac/g/hps3/users/pbutti/physrun2019/Run_10031/hpstr_Ntuples/outputFiles/ --step=hipster --fileExt root --nevents -1 --queue medium --isData 1 --submit 
 ```
 
+In the case one wants to use different hpstr configuration, it is possible to specify them by ```--hpstrCfg <cfg>```
