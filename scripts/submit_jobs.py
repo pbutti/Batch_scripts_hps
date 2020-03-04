@@ -4,18 +4,24 @@ import GeometryMapper
 import os
 import glob
 import subprocess
+#import json
 
 config = OptParsing()
 
-indir   = config.indir
-outdir  = config.outdir
-step    = config.step
-nevents = config.nevents
-local   = config.local
-submit  = config.submit
-year    = config.year
-wall    = config.wall
-fileExt = config.fileExt
+indir    = config.indir
+outdir   = config.outdir
+step     = config.step
+nevents  = config.nevents
+local    = config.local
+submit   = config.submit
+year     = config.year
+wall     = config.wall
+fileExt  = config.fileExt
+hpstrCfg = config.hpstrCfg
+isData   = config.isData
+listfiles = config.listfiles
+extraFlags = config.extraFlags
+#jsonFile  = config.json
 
 if (local and submit):
     print "WARNING: setup both local and batch submission"
@@ -32,35 +38,29 @@ if (config.verbose):
 # MRSolt stdhep location:
 #  /nfs/slac/g/hps_data2/mc_production/tritrig/4pt55/stdhep/00/tritrig_0000.stdhep
 
-'''
-if ("stdhep" in step):
-    fileExt = ".stdhep"
-elif ("spacing" in step):
-    fileExt = ".slcio"
-elif ("readout" in step):
-    fileExt = ".slcio"
-elif ("recon" in step or "align" in step):
-    fileExt = ".slcio"
-elif ("hipster" in step):
-    fileExt = ".slcio"
-else :
-    print "ERROR: step not found! Select between stdhep,spacing,readout,recon"
-    sys.exit(1)
-'''
-
-
 # Grep initial files
 if (config.verbose):
     print "Grepping for:", "ls " + indir+"/*" + fileExt +"*"
-inFileList = glob.glob(indir+"/*" + fileExt+"*")
-if (config.verbose):
-    print inFileList
-if len(inFileList)==0:
-    print "Try grepping for ls "+indir+"/*/*" + fileExt+"*"
-    inFileList = glob.glob(indir+"/*/*" + fileExt+"*")
-    print "Total number of file found=", len(inFileList)
-if (config.verbose):
-    print inFileList
+
+inFileList = []
+
+if (indir!="") : 
+
+    inFileList = glob.glob(indir+"/*" + fileExt+"*")
+    if (config.verbose):
+        print inFileList
+        if len(inFileList)==0:
+            print "Try grepping for ls "+indir+"/*/*" + fileExt+"*"
+            inFileList = glob.glob(indir+"/*/*" + fileExt+"*")
+        print "Total number of file found=", len(inFileList)
+    if (config.verbose):
+        print inFileList
+
+if (listfiles!=""):
+    infile=open(listfiles)
+    for line in infile.readlines():
+        inFileList.append(line.strip())
+    infile.close()
 
 #Create the script directory, the log directory and the output file directory in the outdir
 logdir = outdir+"/logs/"
@@ -95,18 +95,23 @@ for ifile in inFileList:
         sG.setupReadout(ifile,filePrefix+"_readout",geoM.getGeoTag("nominal"))
     elif ("recon" in step):
         #sG.setSteeringFile("steering-files/src/main/resources/org/hps/steering/production/Run2019ReconPlusDataQuality.lcsim")
+        if (year=="2016"):
+            sG.detector="HPS-PhysicsRun2016-Pass2-v0"
+            sG.setHPSJavaDir("/nfs/slac/g/hps2/pbutti/kalman/hps-java/")
+            sG.setSteeringFile("/nfs/slac/g/hps2/pbutti/kalman/hps-java/PhysicsRun2016FullReconMC.lcsim")
+            
         if (year=="2019"):
             #sG.setSteeringFile("steering-files/src/main/resources/org/hps/steering/production/Run2019Recon.lcsim")
             sG.setHPSJavaDir("/nfs/slac/g/hps2/pbutti/alignment/hps-java/")
             sG.setSteeringFile("/nfs/slac/g/hps2/pbutti/alignment/hps-java/PhysicsRun2019FullRecon.lcsim")
-        sG.setupRecon(ifile,filePrefix+"_recon",nevents,fileExt,year)
+        sG.setupRecon(ifile,filePrefix+"_recon",nevents,fileExt,year,extraFlags)
     elif ("align" in step):
         sG.setHPSJavaDir("/nfs/slac/g/hps2/pbutti/alignment/hps-java/")
         sG.setSteeringFile("/nfs/slac/g/hps2/pbutti/alignment/hps-java/PhysicsRun2016_fromLCIO.lcsim")
         sG.setupRecon(ifile,filePrefix+"_align",nevents)
         #Move the millepede.bin
     elif ("hipster" in step):
-        sG.runHipster(ifile)
+        sG.runHipster(ifile,filePrefix+".root",hpstrCfg,isData)
     sG.closeScript()
     #rhel60 is deprecated
     #print "bsub -W "+wall+" -R rhel60 -q " + config.queue + " -o " + logdir + " -e " + logdir + " "+sG.scriptFileName

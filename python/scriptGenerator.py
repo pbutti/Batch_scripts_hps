@@ -16,6 +16,9 @@ class scriptGenerator:
     jarFile        = "distribution/target/hps-distribution-4.5-SNAPSHOT-bin.jar"
     hpsJavaDir     = "/nfs/slac/g/hps2/pbutti/hps-java/"
     detector       = "HPS-PhysicsRun2019-v1-4pt5"
+    
+    #Hipster 
+    hpstrFolder    = "/nfs/slac/g/hps2/pbutti/hipster/"
 
     #Methods
 
@@ -37,7 +40,8 @@ class scriptGenerator:
         self.wline('cd $HOME')
         self.wline('export OUTPUTDIR=$JOBFILEDIR/outputs_'+fileID+'_${LSB_JOBID}/; mkdir $OUTPUTDIR')
         self.wline('echo "Created $OUTPUTDIR"')
-        self.wline('source /nfs/slac/g/hps3/software/setup.sh')
+        # Not needed I think!
+        #self.wline('source /nfs/slac/g/hps3/software/setup.sh')
         self.wline('hostname')
         
     def closeScript(self):
@@ -79,16 +83,18 @@ class scriptGenerator:
         self.wline('java -jar '+self.jarFile+" "+self.steeringFile + " -i " + slcioFile + " -DoutputFile=$OUTPUTDIR/"+outFileName+" -R "+str(runNumber) +" -d "+detector)
         
 
-    def setupRecon(self,inputFilename,outFileName,nevents=-1,fileExt="slcio",year="2019"):
+    def setupRecon(self,inputFilename,outFileName,nevents=-1,fileExt="slcio",year="2019",extraFlags=""):
         self.wline('cd ' + self.hpsJavaDir)
         
         #nominal reconstruction
-        cmd = 'java -jar ' + self.jarFile + ' ' + self.steeringFile  +' -i ' + inputFilename + ' -DoutputFile=$OUTPUTDIR/'+outFileName
+        cmd = 'java -XX:+UseSerialGC -Xmx3000m -jar ' + self.jarFile + ' ' + self.steeringFile  +' -i ' + inputFilename + ' -DoutputFile=$OUTPUTDIR/'+outFileName
+        cmd+=" -d " + self.detector
+        cmd+=" "+extraFlags
         
         #from evio
         if (year=="2019"):
             if (fileExt=="evio"):
-                cmd = 'java -cp ' +self.jarFile + ' org.hps.evio.EvioToLcio ' + inputFilename + ' -DoutputFile=$OUTPUTDIR/'+outFileName
+                cmd = 'java -Xmx3000m -DdisableSvtAlignmentConstants -cp ' +self.jarFile + ' org.hps.evio.EvioToLcio ' + inputFilename + ' -DoutputFile=$OUTPUTDIR/'+outFileName
             else:
                 print "ERROR:script Generator::slcio + 2019 not supported!"
             #if 2019 use a particular detector
@@ -99,9 +105,11 @@ class scriptGenerator:
         self.wline(cmd)
 
 
-    def runHipster(self,slcioFile):
-        self.wline('source /nfs/slac/g/hps2/pbutti/hipster/hpstr_env_init.sh')
-        self.wline('hpstr /nfs/slac/g/hps2/pbutti/hipster/run/rawSvtHits_cfg_bsub.py ' + slcioFile)
+    def runHipster(self,slcioFile,outFile,cfg,isData):
+        self.wline('source '+self.hpstrFolder+'/hpstr_env_init.sh')
+        self.wline('source '+self.hpstrFolder+'/src/hpstr/setup.sh')
+        self.wline('hpstr ' +self.hpstrFolder+'/run/' +cfg + ' -i ' + slcioFile + ' -o' + ' $OUTPUTDIR/'+ outFile + ' -t ' + isData)
+        
             
     def runSlic(self,istdhep,ofile,det,nevs):
         self.wline('echo slic -g ' + det + ' -i ' + istdhep + ' -x -p $OUTPUTDIR/  -o ' + ofile + ' -r ' + str(nevs))
