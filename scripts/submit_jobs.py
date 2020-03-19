@@ -25,7 +25,7 @@ hpstrFolder = config.hpstrFolder
 steeringFile = config.steeringFile
 #jsonFile  = config.json
 
-if (steeringFile ==""):
+if (step=="recon" and steeringFile ==""):
     print "ERROR: missing steering file"
     exit(1)
 
@@ -102,7 +102,7 @@ for ifile in inFileList:
     elif ("recon" in step):
         #sG.setSteeringFile("steering-files/src/main/resources/org/hps/steering/production/Run2019ReconPlusDataQuality.lcsim")
         if (year=="2016"):
-            sG.detector="HPS-PhysicsRun2016-Pass2-v0"
+            sG.detector="HPS-PhysicsRun2016-Pass2"
             sG.setHPSJavaDir("/nfs/slac/g/hps2/pbutti/kalman/hps-java/")
             sG.setSteeringFile(steeringFile)
             #sG.setSteeringFile("/nfs/slac/g/hps2/pbutti/kalman/hps-java/PhysicsRun2016FullReconMC.lcsim")
