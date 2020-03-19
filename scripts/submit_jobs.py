@@ -21,7 +21,13 @@ hpstrCfg = config.hpstrCfg
 isData   = config.isData
 listfiles = config.listfiles
 extraFlags = config.extraFlags
+hpstrFolder = config.hpstrFolder
+steeringFile = config.steeringFile
 #jsonFile  = config.json
+
+if (steeringFile ==""):
+    print "ERROR: missing steering file"
+    exit(1)
 
 if (local and submit):
     print "WARNING: setup both local and batch submission"
@@ -98,7 +104,8 @@ for ifile in inFileList:
         if (year=="2016"):
             sG.detector="HPS-PhysicsRun2016-Pass2-v0"
             sG.setHPSJavaDir("/nfs/slac/g/hps2/pbutti/kalman/hps-java/")
-            sG.setSteeringFile("/nfs/slac/g/hps2/pbutti/kalman/hps-java/PhysicsRun2016FullReconMC.lcsim")
+            sG.setSteeringFile(steeringFile)
+            #sG.setSteeringFile("/nfs/slac/g/hps2/pbutti/kalman/hps-java/PhysicsRun2016FullReconMC.lcsim")
             
         if (year=="2019"):
             #sG.setSteeringFile("steering-files/src/main/resources/org/hps/steering/production/Run2019Recon.lcsim")
@@ -111,6 +118,7 @@ for ifile in inFileList:
         sG.setupRecon(ifile,filePrefix+"_align",nevents)
         #Move the millepede.bin
     elif ("hipster" in step):
+        sG.setHpstrFolder(hpstrFolder)
         sG.runHipster(ifile,filePrefix+".root",hpstrCfg,isData)
     sG.closeScript()
     #rhel60 is deprecated

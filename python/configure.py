@@ -18,6 +18,8 @@ def OptParsing():
     parser.add_option("--hpstrCfg",dest="hpstrCfg",help="Hpstr Configuration to be used",default="anaVtxTuple_cfg.py")
     parser.add_option("--isData",dest="isData",help="Input file is a data File",default="0")
     parser.add_option("--extraFlags", dest="extraFlags",help="Extra flags for reconstruction", default = "")
+    parser.add_option("--hpstrFolder", dest="hpstrFolder",help="Hipstr base folder", default = "/nfs/slac/g/hps2/pbutti/hipster/")
     parser.add_option("-W","--wall",dest="wall",help="time wall in the format [hrs:]minutes, i.e. -W 60 for 1 h", default = "60")
+    parser.add_option("-s","--steeringFile",dest="steeringFile",help="Steering File to use", default = "")
     (config,sys.argv[1:]) = parser.parse_args(sys.argv[1:])
     return config

@@ -107,7 +107,6 @@ class scriptGenerator:
 
     def runHipster(self,slcioFile,outFile,cfg,isData):
         self.wline('source '+self.hpstrFolder+'/hpstr_env_init.sh')
-        self.wline('source '+self.hpstrFolder+'/src/hpstr/setup.sh')
         self.wline('hpstr ' +self.hpstrFolder+'/run/' +cfg + ' -i ' + slcioFile + ' -o' + ' $OUTPUTDIR/'+ outFile + ' -t ' + isData)
         
             
@@ -124,3 +123,6 @@ class scriptGenerator:
 
     def setHPSJavaDir(self, javaDir):
         self.hpsJavaDir = javaDir
+
+    def setHpstrFolder(self, hpstrFolder):
+        self.hpstrFolder = hpstrFolder
