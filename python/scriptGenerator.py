@@ -20,6 +20,9 @@ class scriptGenerator:
     #Hipster 
     hpstrFolder    = "/nfs/slac/g/hps2/pbutti/hipster/"
 
+    #tmpPrefix = where to create the temp folder
+    tmpPrefix = "/scratch/"
+    
     #Methods
 
     def __init__(self, step, scriptdir,outputdir):
@@ -34,7 +37,7 @@ class scriptGenerator:
         self.scriptFileName = self.scriptdir+"/script_submit_job_"+fileID+".sh"
         self.scriptFile = open(self.scriptFileName,"w")
         self.wline("#!/bin/bash")
-        self.wline('JOBFILEDIR=`mktemp -d /scratch/${LSB_JOBID}_JobWork.XXXXXX`')
+        self.wline('JOBFILEDIR=`mktemp -d '+ self.tmpPrefix+ '${LSB_JOBID}_JobWork.XXXXXX`')
         self.wline('echo "Job file directory: $JOBFILEDIR"')
         self.wline('export HOME=$JOBFILEDIR')
         self.wline('cd $HOME')
@@ -84,17 +87,17 @@ class scriptGenerator:
         
 
     def setupRecon(self,inputFilename,outFileName,nevents=-1,fileExt="slcio",year="2019",extraFlags=""):
-        self.wline('cd ' + self.hpsJavaDir)
+        #self.wline('cd ' + self.hpsJavaDir)
         
         #nominal reconstruction
-        cmd = 'java -XX:+UseSerialGC -Xmx3000m -jar ' + self.jarFile + ' ' + self.steeringFile  +' -i ' + inputFilename + ' -DoutputFile=$OUTPUTDIR/'+outFileName
+        cmd = 'java -XX:+UseSerialGC -Xmx3000m -jar ' + self.hpsJavaDir+"/"+self.jarFile + ' ' + self.steeringFile  +' -i ' + inputFilename + ' -DoutputFile=$OUTPUTDIR/'+outFileName
         cmd+=" -d " + self.detector
         cmd+=" "+extraFlags
         
         #from evio
         if (year=="2019"):
             if (fileExt=="evio"):
-                cmd = 'java -Xmx3000m -DdisableSvtAlignmentConstants -cp ' +self.jarFile + ' org.hps.evio.EvioToLcio ' + inputFilename + ' -DoutputFile=$OUTPUTDIR/'+outFileName
+                cmd = 'java -Xmx3000m -DdisableSvtAlignmentConstants -cp ' +self.hpsJavaDir+"/"+self.jarFile + ' org.hps.evio.EvioToLcio ' + inputFilename + ' -DoutputFile=$OUTPUTDIR/'+outFileName
             else:
                 print "ERROR:script Generator::slcio + 2019 not supported!"
             #if 2019 use a particular detector
@@ -126,3 +129,6 @@ class scriptGenerator:
 
     def setHpstrFolder(self, hpstrFolder):
         self.hpstrFolder = hpstrFolder
+
+    def setTmpPrefix(self, tmpPrefix):
+        self.tmpPrefix = tmpPrefix

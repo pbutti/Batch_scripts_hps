@@ -23,6 +23,7 @@ listfiles = config.listfiles
 extraFlags = config.extraFlags
 hpstrFolder = config.hpstrFolder
 steeringFile = config.steeringFile
+tmpPrefix  = config.tmpPrefix
 #jsonFile  = config.json
 
 if (step=="recon" and steeringFile ==""):
@@ -33,7 +34,7 @@ if (local and submit):
     print "WARNING: setup both local and batch submission"
     print "Will set local submission to false."
     local = False
-
+    
 if not os.path.exists(outdir):
     os.makedirs(outdir)
     print "Created outdir", outdir
@@ -92,6 +93,8 @@ for ifile in inFileList:
     ifile_ID+=1
     filePrefix = ifile.split("/")[-1].split(fileExt)[0]
     filePrefix += "_"+str(ifile_ID)
+    
+    sG.setTmpPrefix(tmpPrefix)
     sG.generateScript(filePrefix)
     if ("stdhep" in step):
         sG.setupStdhepToSimul(ifile,filePrefix+"_simul",geoM.getGeoFile("nominal"),nevents)
