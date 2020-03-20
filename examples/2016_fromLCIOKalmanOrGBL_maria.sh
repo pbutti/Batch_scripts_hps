@@ -1,0 +1,1 @@
+python scripts/submit_jobs.py --outdir ~/GBLTracksRefitWithKF_localJobs/ --listfiles listTridents_smaller.txt --step=recon --fileExt slcio --nevents -1 --queue short --isData 0 --year=2016 --extraFlags="-R 7984" --steeringFile "/nfs/slac/g/hps2/pbutti/kalman/hps-java/GBLTracksRefit.lcsim" --tmpPrefix ~/scratch
