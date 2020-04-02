@@ -113,7 +113,8 @@ for ifile in inFileList:
         if (year=="2019"):
             #sG.setSteeringFile("steering-files/src/main/resources/org/hps/steering/production/Run2019Recon.lcsim")
             sG.setHPSJavaDir("/nfs/slac/g/hps2/pbutti/alignment/hps-java/")
-            sG.setSteeringFile("/nfs/slac/g/hps2/pbutti/alignment/hps-java/PhysicsRun2019FullRecon.lcsim")
+            sG.detector="HPS-PhysicsRun2019-v2-4pt5"
+            sG.setSteeringFile(steeringFile)
         sG.setupRecon(ifile,filePrefix+"_recon",nevents,fileExt,year,extraFlags)
     elif ("align" in step):
         sG.setHPSJavaDir("/nfs/slac/g/hps2/pbutti/alignment/hps-java/")

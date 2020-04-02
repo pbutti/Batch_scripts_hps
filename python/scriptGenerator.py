@@ -98,10 +98,12 @@ class scriptGenerator:
         if (year=="2019"):
             if (fileExt=="evio"):
                 cmd = 'java -Xmx3000m -DdisableSvtAlignmentConstants -cp ' +self.hpsJavaDir+"/"+self.jarFile + ' org.hps.evio.EvioToLcio ' + inputFilename + ' -DoutputFile=$OUTPUTDIR/'+outFileName
+                cmd+=" -d " + self.detector + " -x " + self.steeringFile
             else:
-                print "ERROR:script Generator::slcio + 2019 not supported!"
-            #if 2019 use a particular detector
-            cmd+=" -d " + self.detector + " -x " + self.steeringFile
+                cmd = 'java -DdisableSvtAlignmentConstatns -XX:+UseSerialGC -Xmx3000m -jar ' + self.hpsJavaDir + "/"+ self.jarFile + ' ' + self.steeringFile + ' -i ' + inputFilename + ' -DoutputFile=$OUTPUTDIR/'+outFileName
+                cmd+=" -d " + self.detector
+                cmd+=" "+extraFlags
+            
 
         if (nevents>0):
             cmd+=' -n ' + str(nevents)
