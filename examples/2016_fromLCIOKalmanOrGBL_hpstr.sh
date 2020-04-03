@@ -1,0 +1,1 @@
+python scripts/submit_jobs.py --outdir /nfs/slac/g/hps3/users/pbutti/2016_KalmanTrackReco/tridents_kalman_truthInfo/hpstr_ntpules/ --indir /nfs/slac/g/hps3/users/pbutti/2016_KalmanTrackReco/tridents_kalman_truthInfo/outputFiles/ --step=hipster --fileExt slcio --nevents -1 --queue short --isData 0 --year=2016 --verbose --hpstrCfg kalTuple_cfg.py

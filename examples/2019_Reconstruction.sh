@@ -1,0 +1,1 @@
+python scripts/submit_jobs.py --outdir /nfs/slac/g/hps3/users/pbutti/2019_tridents/ --indir /nfs/slac/g/hps3/mc/mc_2019/readout/tritrig/singles/4pt5/ --step=recon --fileExt slcio --nevents -1 --queue short --isData 0 --year=2019 --extraFlags="-R 10000" --steeringFile /nfs/slac/g/hps2/pbutti/alignment/hps-java/Ly0Ly1SteeringFile.lcsim --submit
