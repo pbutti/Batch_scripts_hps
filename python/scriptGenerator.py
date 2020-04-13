@@ -110,9 +110,11 @@ class scriptGenerator:
         self.wline(cmd)
 
 
-    def runHipster(self,slcioFile,outFile,cfg,isData):
+    def runHipster(self,slcioFile,outFile,cfg,isData,extraFlags=""):
         self.wline('source '+self.hpstrFolder+'/hpstr_env_init.sh')
-        self.wline('hpstr ' +self.hpstrFolder+'/run/' +cfg + ' -i ' + slcioFile + ' -o' + ' $OUTPUTDIR/'+ outFile + ' -t ' + isData)
+        cmd = 'hpstr ' +cfg + ' -i ' + slcioFile + ' -o' + ' $OUTPUTDIR/'+ outFile + ' -t ' + isData
+        cmd += " "+extraFlags
+        self.wline(cmd)
         
             
     def runSlic(self,istdhep,ofile,det,nevs):

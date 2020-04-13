@@ -1,0 +1,1 @@
+python scripts/submit_jobs.py --outdir /nfs/slac/g/hps3/users/pbutti/2019_data_10031_hpstr_histos/ --indir /nfs/slac/g/hps3/users/pbutti/2019_data_10031_hpstr_ntuples/outputFiles/ --step=hipster --fileExt root --nevents -1 --queue short --isData 1 --year=2019 --verbose --hpstrCfg /nfs/slac/g/hps2/pbutti/hipster/run/anaKalVtxTuple_cfg.py --extraFlags "-w GBL"
