@@ -100,7 +100,7 @@ class scriptGenerator:
                 cmd = 'java -Xmx3000m -DdisableSvtAlignmentConstants -cp ' +self.hpsJavaDir+"/"+self.jarFile + ' org.hps.evio.EvioToLcio ' + inputFilename + ' -DoutputFile=$OUTPUTDIR/'+outFileName
                 cmd+=" -d " + self.detector + " -x " + self.steeringFile
             else:
-                cmd = 'java -DdisableSvtAlignmentConstatns -XX:+UseSerialGC -Xmx3000m -jar ' + self.hpsJavaDir + "/"+ self.jarFile + ' ' + self.steeringFile + ' -i ' + inputFilename + ' -DoutputFile=$OUTPUTDIR/'+outFileName
+                cmd = 'java -DdisableSvtAlignmentConstants -XX:+UseSerialGC -Xmx3000m -jar ' + self.hpsJavaDir + "/"+ self.jarFile + ' ' + self.steeringFile + ' -i ' + inputFilename + ' -DoutputFile=$OUTPUTDIR/'+outFileName
                 cmd+=" -d " + self.detector
                 cmd+=" "+extraFlags
             
