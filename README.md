@@ -10,6 +10,8 @@ This package provides some configurable scripts to run some tools on the SLAC ba
 
 ## How to run 
 
+source ./setup.sh
+
 ### Running the reco on evio files
 
 This is an example on how to send reconstruction on the batch for 2019 
