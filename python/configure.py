@@ -22,5 +22,6 @@ def OptParsing():
     parser.add_option("-W","--wall",dest="wall",help="time wall in the format [hrs:]minutes, i.e. -W 60 for 1 h", default = "60")
     parser.add_option("-s","--steeringFile",dest="steeringFile",help="Steering File to use", default = "")
     parser.add_option("-t","--tmpPrefix",dest="tmpPrefix",help="Tmp folder prefix to use", default = "/scratch/")
+    parser.add_option("-d","--detector",dest="detector",help="Detector to use", default = "NONE")
     (config,sys.argv[1:]) = parser.parse_args(sys.argv[1:])
     return config
