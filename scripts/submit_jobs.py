@@ -24,6 +24,7 @@ extraFlags = config.extraFlags
 hpstrFolder = config.hpstrFolder
 steeringFile = config.steeringFile
 tmpPrefix  = config.tmpPrefix
+theDetector = config.detector
 #jsonFile  = config.json
 
 if (step=="recon" and steeringFile ==""):
@@ -113,7 +114,8 @@ for ifile in inFileList:
         if (year=="2019"):
             #sG.setSteeringFile("steering-files/src/main/resources/org/hps/steering/production/Run2019Recon.lcsim")
             sG.setHPSJavaDir("/nfs/slac/g/hps2/pbutti/alignment/hps-java/")
-            sG.detector="HPS-PhysicsRun2019-v2-4pt5"
+            #sG.detector="HPS-PhysicsRun2019-v2-4pt5"
+            sG.detector=theDetector
             sG.setSteeringFile(steeringFile)
         sG.setupRecon(ifile,filePrefix+"_recon",nevents,fileExt,year,extraFlags)
     elif ("align" in step):
