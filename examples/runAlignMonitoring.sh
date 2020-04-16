@@ -10,7 +10,7 @@ python scripts/submit_jobs.py --outdir ~/10031_AlignmentMonitoring_v0Skims_MPIId
 ls -1 --color=never ~/10031_AlignmentMonitoring_v0Skims_MPIIdata_AliTest_$iteration/submit_scripts/*.sh > listAlign_$iteration.txt
 echo "python ./scripts/run_shPool.py --fileList listAlign_$iteration.txt --logDir ~/10031_AlignmentMonitoring_v0Skims_MPIIdata_AliTest_$iteration/Logs/ -p 10"
 
-python ./scripts/run_shPool.py --fileList listAlign_$iteration.txt --logDir ~/10031_AlignmentMonitoring_v0Skims_MPIIdata_AliTest_$iteration/Logs/ -p 10
+#python ./scripts/run_shPool.py --fileList listAlign_$iteration.txt --logDir ~/10031_AlignmentMonitoring_v0Skims_MPIIdata_AliTest_$iteration/Logs/ -p 10
 
-cd ~/10031_AlignmentMonitoring_v0Skims_MPIIdata_AliTest_$iteration/outputFiles
-hadd AlignMonitoring_10031.root output*/*.root
+#cd ~/10031_AlignmentMonitoring_v0Skims_MPIIdata_AliTest_$iteration/outputFiles
+#hadd AlignMonitoring_10031.root output*/*.root
