@@ -19,3 +19,4 @@ python ./scripts/run_shPool.py --fileList list${tag}_$iteration.txt --logDir ~/$
 
 cd ~/${runNumber}_AlignmentMonitoring_${datainfo}_MPIIdata_${tag}_$iteration/outputFiles
 hadd AlignMonitoring_${runNumber}_${tag}_${iteration}.root output*/*.root
+
