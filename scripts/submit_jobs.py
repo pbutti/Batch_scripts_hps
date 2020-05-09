@@ -25,6 +25,8 @@ hpstrFolder = config.hpstrFolder
 steeringFile = config.steeringFile
 tmpPrefix  = config.tmpPrefix
 theDetector = config.detector
+nfsPath     = config.nfsPath
+
 #jsonFile  = config.json
 
 if (step=="recon" and steeringFile ==""):
@@ -87,7 +89,7 @@ geoM = GeometryMapper.GeometryMapper()
 # Generate running script
 
 count=0
-sG = scriptGenerator.scriptGenerator(step,scriptdir,outputfdir)
+sG = scriptGenerator.scriptGenerator(step,scriptdir,outputfdir,nfsPath)
 
 ifile_ID = 0
 for ifile in inFileList:
@@ -107,20 +109,20 @@ for ifile in inFileList:
         #sG.setSteeringFile("steering-files/src/main/resources/org/hps/steering/production/Run2019ReconPlusDataQuality.lcsim")
         if (year=="2016"):
             sG.detector="HPS-PhysicsRun2016-Pass2"
-            sG.setHPSJavaDir("/nfs/slac/g/hps2/pbutti/kalman/hps-java/")
+            sG.setHPSJavaDir(nfsPath+"/slac/g/hps2/pbutti/kalman/hps-java/")
             sG.setSteeringFile(steeringFile)
             #sG.setSteeringFile("/nfs/slac/g/hps2/pbutti/kalman/hps-java/PhysicsRun2016FullReconMC.lcsim")
             
         if (year=="2019"):
             #sG.setSteeringFile("steering-files/src/main/resources/org/hps/steering/production/Run2019Recon.lcsim")
-            sG.setHPSJavaDir("/nfs/slac/g/hps2/pbutti/alignment/hps-java/")
+            sG.setHPSJavaDir(nfsPath+"/slac/g/hps2/pbutti/alignment/hps-java/")
             #sG.detector="HPS-PhysicsRun2019-v2-4pt5"
             sG.detector=theDetector
             sG.setSteeringFile(steeringFile)
         sG.setupRecon(ifile,filePrefix+"_recon",nevents,fileExt,year,extraFlags)
     elif ("align" in step):
-        sG.setHPSJavaDir("/nfs/slac/g/hps2/pbutti/alignment/hps-java/")
-        sG.setSteeringFile("/nfs/slac/g/hps2/pbutti/alignment/hps-java/PhysicsRun2016_fromLCIO.lcsim")
+        sG.setHPSJavaDir(nfsPath+"/slac/g/hps2/pbutti/alignment/hps-java/")
+        sG.setSteeringFile(nfsPath+"/slac/g/hps2/pbutti/alignment/hps-java/PhysicsRun2016_fromLCIO.lcsim")
         sG.setupRecon(ifile,filePrefix+"_align",nevents)
         #Move the millepede.bin
     elif ("hipster" in step):

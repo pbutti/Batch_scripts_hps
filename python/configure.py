@@ -23,5 +23,7 @@ def OptParsing():
     parser.add_option("-s","--steeringFile",dest="steeringFile",help="Steering File to use", default = "")
     parser.add_option("-t","--tmpPrefix",dest="tmpPrefix",help="Tmp folder prefix to use", default = "/scratch/")
     parser.add_option("-d","--detector",dest="detector",help="Detector to use", default = "NONE")
+    parser.add_option("--nfsPath",dest="nfsPath",help="nfs mount path", default = "/nfs/")
+    
     (config,sys.argv[1:]) = parser.parse_args(sys.argv[1:])
     return config

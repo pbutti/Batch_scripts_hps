@@ -11,24 +11,30 @@ class scriptGenerator:
     step           = "stdhep"
     #Readout steering file: /nfs/slac/g/hps2/pbutti/MC_basic_generation/readoutFiles/Test_readout.lcsim
     #Recon   steering file: steering-files/src/main/resources/org/hps/steering/production/Run2019ReconPlusDataQuality.lcsim
+
+    nfsPath   = "/nfs/"
     
-    steeringFile   = "/nfs/slac/g/hps2/pbutti/MC_basic_generation/readoutFiles/Test_readout.lcsim"
+    
+    steeringFile   = nfsPath+"/slac/g/hps2/pbutti/MC_basic_generation/readoutFiles/Test_readout.lcsim"
     jarFile        = "distribution/target/hps-distribution-4.5-SNAPSHOT-bin.jar"
-    hpsJavaDir     = "/nfs/slac/g/hps2/pbutti/hps-java/"
+    hpsJavaDir     = nfsPath+"/slac/g/hps2/pbutti/hps-java/"
     detector       = "HPS-PhysicsRun2019-v1-4pt5"
-    
+
     #Hipster 
-    hpstrFolder    = "/nfs/slac/g/hps2/pbutti/hipster/"
+    hpstrFolder    = nfsPath+"/slac/g/hps2/pbutti/hipster/"
 
     #tmpPrefix = where to create the temp folder
     tmpPrefix = "/scratch/"
+
+    
     
     #Methods
 
-    def __init__(self, step, scriptdir,outputdir):
+    def __init__(self, step, scriptdir,outputdir,nfsPath):
         self.step           = step
         self.scriptdir      = scriptdir
         self.outputdir      = outputdir
+        self.nfsPath        = nfsPath
 
     def setupStep(self):
         pass
@@ -49,7 +55,10 @@ class scriptGenerator:
         
     def closeScript(self):
         self.wline('echo "Moving files to outputdir"')
-        self.wline('mv $OUTPUTDIR ' + self.outputdir)
+        #This has issues with maintaning permissions
+        #self.wline('mv $OUTPUTDIR ' + self.outputdir)
+        self.wline('cp -r $OUTPUTDIR ' + self.outputdir)
+        self.wline('rm -r $OUTPUTDIR ')
         self.wline('echo "Removing $JOBFILEDIR"')
         self.wline('rm -R $JOBFILEDIR')
         self.scriptFile.close()
@@ -63,7 +72,7 @@ class scriptGenerator:
         #TODO-FIX THIS
         self.wline('cd ' + self.hpsJavaDir)
         # Setup SLCIO
-        self.wline('source /nfs/slac/g/hps/hps_soft/slic/build/slic-env.sh')
+        self.wline('source ' +self.nfsPath+ '/slac/g/hps/hps_soft/slic/build/slic-env.sh')
         #self.wline('source /nfs/slac/g/hps2/pbutti/scripts/setups/slic-env.sh')
         #self.wline('export LD_LIBRARY_PATH=/usr/lib64:$LD_LIBRARY_PATH')
         self.wline('env')

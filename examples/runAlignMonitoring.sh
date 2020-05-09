@@ -1,17 +1,60 @@
+#!/bin/bash
+
 iteration=$1
 tag=$2
 datainfo=$3
 listfiles=$4
 runNumber=$5
-basepath=$6
+location=$6
 
 if [ "$#" -ne 6 ]; then
     echo "Illegal number of parameters"
-    echo "runAlignmMonitoring.sh <iteration> <tag> <dataInfo> <listfiles> <runNumber> <basepath ~/ | /nfs/slac/g/hps2/pbutti/>"
+    echo "runAlignmMonitoring.sh <iteration> <tag> <dataInfo> <listfiles> <runNumber> <location home | hps2 | hps3 >"
     exit 1
 fi
 
-python scripts/submit_jobs.py --outdir ${basepath}/${runNumber}_AlignmentMonitoring_${datainfo}_MPIIdata_${tag}_$iteration/ --listfiles ${listfiles} --step=recon --fileExt slcio --nevents -1 --isData 1 --year=2019 --extraFlags="-R $runNumber" --steeringFile "/nfs/slac/g/hps2/pbutti/alignment/hps-java/gbl_alignFromLCIO_newGeo.lcsim" --tmpPrefix ~/scratch  -d HPS_${tag}_$iteration 
+HOST=`hostname`
+echo $HOST
+tmpPref=""
+fixPerms=false
+
+if [[ "$HOST" == *"cbravo-hps"* ]]; then
+    echo "Running on Maria"
+    tmpPref="--tmpPrefix ~/scratch"
+    nfsPath=${HOME}"/nfs/"
+elif [[ "$HOST" == *"cent"* ]]; then
+    echo "Running on Centos"
+    tmpPref=""
+    nfsPath="/nfs/"
+elif [[ "$HOST" = *"bla"* ]]; then
+    echo "Running on bla"
+else
+    echo "Machine not known"
+    exit 1
+fi
+
+
+basepath=""
+
+if [[ "$location" == "home" ]]; then
+    echo "Outputs in local home"
+    basepath=$HOME
+elif [[ "$location" == "hps2" ]]; then
+    basepath=$nfsPath"/slac/g/"$location"/"$USER
+    echo "To "{$basepath}
+elif [[ "$location" == "hps3" ]]; then
+    basepath=$nfsPath"/slac/g/"$location"/users/"$USER
+    echo "To "${basepath}
+else
+    echo "End point location not known"
+    exit 1
+fi
+
+    
+
+outputDirectory=${basepath}/${runNumber}_AlignmentMonitoring_${datainfo}_MPIIdata_${tag}_$iteration/
+
+python scripts/submit_jobs.py --nfsPath ${nfsPath} --outdir ${basepath}/${runNumber}_AlignmentMonitoring_${datainfo}_MPIIdata_${tag}_$iteration/ --listfiles ${listfiles} --step=recon --fileExt slcio --nevents 10 --isData 1 --year=2019 --extraFlags="-R $runNumber" --steeringFile ${nfsPath}"slac/g/hps2/pbutti/alignment/hps-java/gbl_alignFromLCIO_newGeo.lcsim" ${tmpPref}  -d HPS_${tag}_$iteration 
 
 ls -1 --color=never ${basepath}/${runNumber}_AlignmentMonitoring_${datainfo}_MPIIdata_${tag}_$iteration/submit_scripts/*.sh > list${tag}_$iteration.txt
 echo "python ./scripts/run_shPool.py --fileList list${tag}_$iteration.txt --logDir ${basepath}/${runNumber}_AlignmentMonitoring_${datainfo}_MPIIdata_${tag}_$iteration/Logs/ -p 10"
@@ -21,3 +64,5 @@ python ./scripts/run_shPool.py --fileList list${tag}_$iteration.txt --logDir ${b
 cd ${basepath}/${runNumber}_AlignmentMonitoring_${datainfo}_MPIIdata_${tag}_$iteration/outputFiles
 hadd AlignMonitoring_${runNumber}_${tag}_${iteration}.root output*/*.root
 
+#if [ ${fixPerms} = true ]; then
+#    chmod g+w ${outputDirectory}
