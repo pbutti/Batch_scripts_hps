@@ -11,8 +11,6 @@ if [ "$#" -ne 6 ]; then
     exit 1
 fi
 
-
-
 python scripts/submit_jobs.py --outdir ${basepath}/${runNumber}_AlignmentMonitoring_${datainfo}_MPIIdata_${tag}_$iteration/ --listfiles ${listfiles} --step=recon --fileExt slcio --nevents -1 --isData 1 --year=2019 --extraFlags="-R $runNumber" --steeringFile "/nfs/slac/g/hps2/pbutti/alignment/hps-java/gbl_alignFromLCIO_newGeo.lcsim" --tmpPrefix ~/scratch  -d HPS_${tag}_$iteration 
 
 ls -1 --color=never ${basepath}/${runNumber}_AlignmentMonitoring_${datainfo}_MPIIdata_${tag}_$iteration/submit_scripts/*.sh > list${tag}_$iteration.txt
