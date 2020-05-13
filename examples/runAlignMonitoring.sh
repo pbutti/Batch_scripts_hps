@@ -27,8 +27,10 @@ elif [[ "$HOST" == *"cent"* ]]; then
     echo "Running on Centos"
     tmpPref=""
     nfsPath="/nfs/"
-elif [[ "$HOST" = *"bla"* ]]; then
-    echo "Running on bla"
+elif [[ "$HOST" = *"rdsrv300"* ]]; then
+    echo "DAQ Machine"
+    tmpPref="--tmpPrefix /tmp/scratch"
+    nfsPath=${HOME}"/nfs/"
 else
     echo "Machine not known"
     exit 1
