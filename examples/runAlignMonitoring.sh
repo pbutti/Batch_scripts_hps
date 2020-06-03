@@ -18,19 +18,23 @@ HOST=`hostname`
 echo $HOST
 tmpPref=""
 fixPerms=false
+threads="-p 5"
 
 if [[ "$HOST" == *"cbravo-hps"* ]]; then
     echo "Running on Maria"
     tmpPref="--tmpPrefix ~/scratch"
     nfsPath=${HOME}"/nfs/"
+    threads="-p 10"
 elif [[ "$HOST" == *"cent"* ]]; then
     echo "Running on Centos"
     tmpPref=""
     nfsPath="/nfs/"
-elif [[ "$HOST" = *"rdsrv300"* ]]; then
+    threads="-p 10"
+elif [[ "$HOST" = *"rdsrv30"* ]]; then
     echo "DAQ Machine"
     tmpPref="--tmpPrefix /tmp/scratch"
     nfsPath=${HOME}"/nfs/"
+    threads="-p 20"
 else
     echo "Machine not known"
     exit 1
@@ -62,9 +66,9 @@ python scripts/submit_jobs.py --nfsPath ${nfsPath} --outdir ${basepath}/${runNum
 [ ! -e list${tag}_$iteration.txt ] || rm list${tag}_$iteration.txt
 
 ls -1 --color=never ${basepath}/${runNumber}_AlignmentMonitoring_${datainfo}_MPIIdata_${tag}_$iteration/submit_scripts/*.sh > list${tag}_$iteration.txt
-echo "python ./scripts/run_shPool.py --fileList list${tag}_$iteration.txt --logDir ${basepath}/${runNumber}_AlignmentMonitoring_${datainfo}_MPIIdata_${tag}_$iteration/Logs/ -p 10"
+echo "python ./scripts/run_shPool.py --fileList list${tag}_$iteration.txt --logDir ${basepath}/${runNumber}_AlignmentMonitoring_${datainfo}_MPIIdata_${tag}_$iteration/Logs/ ${threads}"
 
-python ./scripts/run_shPool.py --fileList list${tag}_$iteration.txt --logDir ${basepath}/${runNumber}_AlignmentMonitoring_${datainfo}_MPIIdata_${tag}_$iteration/Logs/ -p 10
+python ./scripts/run_shPool.py --fileList list${tag}_$iteration.txt --logDir ${basepath}/${runNumber}_AlignmentMonitoring_${datainfo}_MPIIdata_${tag}_$iteration/Logs/ ${threads}
 
 cd ${basepath}/${runNumber}_AlignmentMonitoring_${datainfo}_MPIIdata_${tag}_$iteration/outputFiles
 hadd AlignMonitoring_${runNumber}_${tag}_${iteration}.root output*/*.root
