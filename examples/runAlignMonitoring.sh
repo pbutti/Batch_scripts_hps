@@ -61,7 +61,7 @@ fi
 
 outputDirectory=${basepath}/${runNumber}_AlignmentMonitoring_${datainfo}_MPIIdata_${tag}_$iteration/
 
-python scripts/submit_jobs.py --nfsPath ${nfsPath} --outdir ${basepath}/${runNumber}_AlignmentMonitoring_${datainfo}_MPIIdata_${tag}_$iteration/ --listfiles ${listfiles} --step=recon --fileExt slcio --nevents -1  --isData 1 --year=2019 --extraFlags="-R $runNumber" --steeringFile ${nfsPath}"slac/g/hps2/pbutti/alignment/hps-java/gbl_alignFromLCIO_newGeo$MC.lcsim" ${tmpPref}  -d HPS_${tag}_$iteration 
+python scripts/submit_jobs.py --nfsPath ${nfsPath} --outdir ${basepath}/${runNumber}_AlignmentMonitoring_${datainfo}_MPIIdata_${tag}_$iteration/ --listfiles ${listfiles} --step=recon --fileExt slcio --nevents -1  --isData 1 --year=2019 --extraFlags="-R $runNumber" --steeringFile ${nfsPath}"slac/g/hps2/pbutti/alignment/hps-java/gbl_alignFromLCIO_newGeo$MC.lcsim" ${tmpPref}  -d HPS_${tag}_$iteration
 
 [ ! -e list${tag}_$iteration.txt ] || rm list${tag}_$iteration.txt
 
@@ -71,7 +71,7 @@ echo "python ./scripts/run_shPool.py --fileList list${tag}_$iteration.txt --logD
 python ./scripts/run_shPool.py --fileList list${tag}_$iteration.txt --logDir ${basepath}/${runNumber}_AlignmentMonitoring_${datainfo}_MPIIdata_${tag}_$iteration/Logs/ ${threads}
 
 cd ${basepath}/${runNumber}_AlignmentMonitoring_${datainfo}_MPIIdata_${tag}_$iteration/outputFiles
-hadd AlignMonitoring_${runNumber}_${tag}_${iteration}.root output*/*.root
+hadd AlignMonitoring_${runNumber}_${datainfo}_${tag}_${iteration}.root output*/*.root
 
 #if [ ${fixPerms} = true ]; then
 #    chmod g+w ${outputDirectory}
