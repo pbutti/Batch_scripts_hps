@@ -127,7 +127,7 @@ for ifile in inFileList:
         #Move the millepede.bin
     elif ("hipster" in step):
         sG.setHpstrFolder(hpstrFolder)
-        sG.runHipster(ifile,filePrefix+".root",hpstrCfg,isData,extraFlags)
+        sG.runHipster(ifile,filePrefix+".root",hpstrCfg,isData,,year,extraFlags)
     sG.closeScript()
     #rhel60 is deprecated
     #print "bsub -W "+wall+" -R rhel60 -q " + config.queue + " -o " + logdir + " -e " + logdir + " "+sG.scriptFileName
