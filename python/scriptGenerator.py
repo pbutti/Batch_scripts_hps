@@ -16,7 +16,7 @@ class scriptGenerator:
     
     
     steeringFile   = nfsPath+"/slac/g/hps2/pbutti/MC_basic_generation/readoutFiles/Test_readout.lcsim"
-    jarFile        = "distribution/target/hps-distribution-4.5-SNAPSHOT-bin.jar"
+    jarFile        = "distribution/target/hps-distribution-5.1-SNAPSHOT-bin.jar"
     hpsJavaDir     = nfsPath+"/slac/g/hps2/pbutti/hps-java/"
     detector       = "HPS-PhysicsRun2019-v1-4pt5"
 
@@ -95,24 +95,41 @@ class scriptGenerator:
         self.wline('java -jar '+self.jarFile+" "+self.steeringFile + " -i " + slcioFile + " -DoutputFile=$OUTPUTDIR/"+outFileName+" -R "+str(runNumber) +" -d "+detector)
         
 
+    def setupReconLCIOList(self,inputFiles,outFileName,nevents=-1,fileExt="slcio",year="2019",extraFlags=""):
+
+        jnaLib = '-Djna.library.path="/u/ea/pbutti/nfs/slac/g/hps2/pbutti/alignment/GeneralBrokenLines/cpp/lib/" '
+        
+        cmd = 'java -XX:+UseSerialGC -Xmx3000m '+jnaLib+' -jar ' + self.hpsJavaDir+"/"+self.jarFile + ' ' + self.steeringFile +"\\\n"
+        for ifile in inputFiles:
+            cmd+= ' -i ' + ifile +' \\\n'
+            pass
+        cmd += ' -DoutputFile=$OUTPUTDIR/' + outFileName
+        cmd += ' -d ' + self.detector
+        cmd += " " + extraFlags 
+
+        if (nevents>0):
+            cmd+=' -n ' + str(nevents)
+        self.wline(cmd)
+ 
     def setupRecon(self,inputFilename,outFileName,nevents=-1,fileExt="slcio",year="2019",extraFlags=""):
         #self.wline('cd ' + self.hpsJavaDir)
         
+        jnaLib = '-Djna.library.path="/u/ea/pbutti/nfs/slac/g/hps2/pbutti/alignment/GeneralBrokenLines/cpp/lib/" '
+        
         #nominal reconstruction
-        cmd = 'java -XX:+UseSerialGC -Xmx3000m -jar ' + self.hpsJavaDir+"/"+self.jarFile + ' ' + self.steeringFile  +' -i ' + inputFilename + ' -DoutputFile=$OUTPUTDIR/'+outFileName
+        cmd = 'java -XX:+UseSerialGC -Xmx3000m '+jnaLib+' -jar ' + self.hpsJavaDir+"/"+self.jarFile + ' ' + self.steeringFile  +' -i ' + inputFilename + ' -DoutputFile=$OUTPUTDIR/'+outFileName
         cmd+=" -d " + self.detector
         cmd+=" "+extraFlags
         
         #from evio
         if (year=="2019"):
             if (fileExt=="evio"):
-                cmd = 'java -Xmx3000m -DdisableSvtAlignmentConstants -cp ' +self.hpsJavaDir+"/"+self.jarFile + ' org.hps.evio.EvioToLcio ' + inputFilename + ' -DoutputFile=$OUTPUTDIR/'+outFileName
+                cmd = 'java -Xmx3000m -DdisableSvtAlignmentConstants '+jnaLib+' -cp ' +self.hpsJavaDir+"/"+self.jarFile + ' org.hps.evio.EvioToLcio ' + inputFilename + ' -DoutputFile=$OUTPUTDIR/'+outFileName
                 cmd+=" -d " + self.detector + " -x " + self.steeringFile
             else:
-                cmd = 'java -DdisableSvtAlignmentConstants -XX:+UseSerialGC -Xmx3000m -jar ' + self.hpsJavaDir + "/"+ self.jarFile + ' ' + self.steeringFile + ' -i ' + inputFilename + ' -DoutputFile=$OUTPUTDIR/'+outFileName
+                cmd = 'java -DdisableSvtAlignmentConstants -XX:+UseSerialGC -Xmx3000m '+jnaLib+' -jar ' + self.hpsJavaDir + "/"+ self.jarFile + ' ' + self.steeringFile + ' -i ' + inputFilename + ' -DoutputFile=$OUTPUTDIR/'+outFileName
                 cmd+=" -d " + self.detector
                 cmd+=" "+extraFlags
-            
 
         if (nevents>0):
             cmd+=' -n ' + str(nevents)

@@ -1,2 +1,0 @@
-/nfs/slac/g/hps_data2/data/physrun2019/hps_010103/skim/alignment/hps_010103.evio.00191_alignment_bottom.slcio
-/nfs/slac/g/hps_data2/data/physrun2019/hps_010103/skim/alignment/hps_010103.evio.00191_alignment_top.slcio
